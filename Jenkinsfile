@@ -1,19 +1,20 @@
-def secret = 'Indizzy'
+def credential = 'Indizzy'
 def server = 'awan@103.63.25.25'
 def directory = 'literature-frontend'
 def branch = 'production'
+def url = 'https://github.com/Indizzy/literature-frontend'
 
 pipeline{
     agent any
     stages{
-        stage ('compose down &  pull'){
+        stage ('pull from repo'){
             steps{
                 sshagent([secret]) {
                     sh """ssh -o StrictHostKeyChecking=no ${server} << EOF
                     cd ${directory}
-                    docker-compose down
-                    docker system prune -f
-                    git pull origin ${branch}
+                    git remote add origin ${url} || git remote set-url origin ${url}
+                    
+                    git pull ${url} ${branch}
                     exit
                     EOF"""
                 }
